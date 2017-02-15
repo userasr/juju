@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+import subprocess
+# Load modules from $CHARM_DIR/lib
+while True:
+    print subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT)

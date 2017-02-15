@@ -1,0 +1,13 @@
+name: layer-jdk-example
+summary: <Fill in summary here>
+maintainer: maintainer
+description: |
+  <Multi-line description here>
+tags:
+  - misc
+subordinate: true
+requires:
+  hadoop-plugin:
+    interface: "hadoop-plugin"
+    scope: "container"
+series: ['trusty']
