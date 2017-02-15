@@ -5,8 +5,8 @@ description: |
   <Multi-line description here>
 tags:
   - misc
-subordinate: true
-requires:
+#subordinate: true
+provides:
   hadoop-plugin:
     interface: "hadoop-plugin"
     scope: "container"
