@@ -1,5 +1,40 @@
-#!/usr/bin/env python3
-import subprocess
-# Load modules from $CHARM_DIR/lib
-while True:
-    print subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT)
+#!/bin/bash
+
+###THIS SCRIPT IS USED TO SEARCH AND SET MY_JAVA AND MY_HADOOP VARS
+real_dir() {
+  SOURCE="${1:-${BASH_SOURCE[0]}}"
+  while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    SOURCE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$SOURCE_DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  done
+  SOURCE_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  echo "$SOURCE_DIR"
+}
+
+# Searches for hadoop executable in HADOOP_PREFIX, HADOOP_HOME, PATH, and user binary locations.
+find_hadoop(){
+  HADOOP_SEARCH_PATH="${HADOOP_PREFIX}/bin:${HADOOP_HOME}/bin:${PATH}:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:."
+  HADOOP=`PATH=${HADOOP_SEARCH_PATH} && command -v hadoop 2>/dev/null`
+  [[ $? -eq 0 ]] && echo "${HADOOP}"
+}
+
+# Searches for java executable in JAVA_HOME, PATH, and user binary locations
+find_java(){
+  JAVA_SEARCH_PATH="${JAVA_HOME}/bin:${PATH}:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:."
+  JAVA=`PATH=${JAVA_SEARCH_PATH} && command -v java 2>/dev/null`
+  [[ $? -eq 0 ]] && echo "${JAVA}"
+}
+
+MY_HADOOP="${MY_HADOOP:-$(find_hadoop)}"
+MY_JAVA="${MY_JAVA:-$(find_java)}"
+
+if [[ -z ${MY_HADOOP} ]]; then
+  echo "hadoop executable not found"
+  exit 1
+fi
+  
+if [[ -z ${MY_JAVA} ]]; then
+    echo "java executable not found"
+    exit 1
+fi
